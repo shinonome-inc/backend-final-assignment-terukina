@@ -171,12 +171,18 @@ class TestSignupView(TestCase):
         self.assertEqual(User.objects.all().count(), 0)
 
 
-# class Homeview(TestCase):
-# def test_success_get(self):
-# self.url = reverse("tweets:home")
-# response = self.client.get(self.url)
-# self.assertEqual(response.status_code, 200)
-# self.assertTemplateUsed(response, "home.html")
+class Homeview(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="test", email="test@test.com", password="testpassword")
+
+    def test_success_get(self):
+        login_success = self.client.login(username="test", password="testpassword")
+        self.assertTrue(login_success)
+
+        self.url = reverse("tweets:home")
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "tweets/home.html")
 
 
 #  class TestLoginView(TestCase):
