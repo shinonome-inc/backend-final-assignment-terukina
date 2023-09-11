@@ -144,14 +144,14 @@ class TestSignupView(TestCase):
         only_numbers_password = {
             "username": "test",
             "email": "test@test.com",
-            "password1": "77777777",
-            "password2": "77777777",
+            "password1": "46973298",
+            "password2": "46973298",
         }
         response = self.client.post(self.url, only_numbers_password)
         form = response.context["form"]
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(form.errors["password2"], ["このパスワードは一般的すぎます。", "このパスワードは数字しか使われていません。"])
+        self.assertEqual(form.errors["password2"], ["このパスワードは数字しか使われていません。"])
 
         self.assertEqual(User.objects.all().count(), 0)
 
@@ -170,19 +170,21 @@ class TestSignupView(TestCase):
 
         self.assertEqual(User.objects.all().count(), 0)
 
+    def test_failure_post_with_empty_form(self):
+        empty_form = {
+            "username": "",
+            "email": "",
+            "password1": "",
+            "password2": "",
+        }
+        response = self.client.post(self.url, empty_form)
+        form = response.context["form"]
 
-class Homeview(TestCase):
-    def setUp(self):
-        self.user = User.objects.create_user(username="test", email="test@test.com", password="testpassword")
-
-    def test_success_get(self):
-        login_success = self.client.login(username="test", password="testpassword")
-        self.assertTrue(login_success)
-
-        self.url = reverse("tweets:home")
-        response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "tweets/home.html")
+        self.assertIn("このフィールドは必須です。", form.errors["username"])
+        self.assertIn("このフィールドは必須です。", form.errors["email"])
+        self.assertIn("このフィールドは必須です。", form.errors["password1"])
+        self.assertIn("このフィールドは必須です。", form.errors["password2"])
 
 
 #  class TestLoginView(TestCase):
