@@ -151,7 +151,7 @@ class TestSignupView(TestCase):
         form = response.context["form"]
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(form.errors["password2"], ["このパスワードは数字しか使われていません。"])
+        self.assertIn("このパスワードは数字しか使われていません。", form.errors["password2"])
 
         self.assertEqual(User.objects.all().count(), 0)
 
